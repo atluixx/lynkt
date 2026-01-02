@@ -44,22 +44,28 @@ pub struct LoginPayload {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Validate)]
-pub struct CreateOrUpdateLinkPayload {
+pub struct CreateLinkPayload {
     #[validate(url)]
     pub url: String,
-
     pub label: String,
-
     pub icon: Option<String>,
-
     pub group_id: Option<Uuid>,
-
     pub order_index: Option<i32>,
-
     pub is_active: Option<bool>,
-
     pub max_clicks: Option<i32>,
+    pub active_until: Option<DateTime<Utc>>,
+}
 
+#[derive(Debug, Clone, Serialize, Deserialize, Validate)]
+pub struct UpdateLinkPayload {
+    #[validate(url)]
+    pub url: Option<String>,
+    pub label: Option<String>,
+    pub icon: Option<String>,
+    pub group_id: Option<Uuid>,
+    pub order_index: Option<i32>,
+    pub is_active: Option<bool>,
+    pub max_clicks: Option<i32>,
     pub active_until: Option<DateTime<Utc>>,
 }
 

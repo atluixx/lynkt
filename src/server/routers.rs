@@ -6,8 +6,11 @@ use axum::{
 use crate::{
     server::handlers::{
         auth::{login, me, register},
-        middleware_function,
-        user::{create_user_link, delete_user, get_user, get_user_links, get_users, update_user},
+        auth_middleware,
+        user::{
+            create_user_link, delete_user, delete_user_link, get_user, get_user_link,
+            get_user_links, get_users, update_user, update_user_link,
+        },
     },
     structs::ProgramState,
 };
@@ -20,7 +23,10 @@ pub fn get_users_router() -> Router<ProgramState> {
         .route("/{slug}/", patch(update_user))
         .route("/{slug}/", delete(delete_user))
         .route("/{slug}/links/", get(get_user_links))
+        .route("/{slug}/links/{id}/", get(get_user_link))
         .route("/{slug}/links/", post(create_user_link))
+        .route("/{slug}/links/{id}/", patch(update_user_link))
+        .route("/{slug}/links/{id}/", delete(delete_user_link))
 }
 
 // -> /auth
@@ -32,7 +38,7 @@ pub fn get_auth_router(state: ProgramState) -> Router<ProgramState> {
             "/me/",
             post(me).layer(middleware::from_fn_with_state(
                 state.clone(),
-                middleware_function,
+                auth_middleware,
             )),
         )
 }

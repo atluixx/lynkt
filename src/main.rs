@@ -1,22 +1,22 @@
-use axum::{
-    Router,
-    http::{
-        HeaderValue, Method,
-        header::{AUTHORIZATION, CONTENT_TYPE},
-    },
-};
-use std::env;
-use tokio::net::TcpListener;
-use tower_http::cors::CorsLayer;
-
-use crate::{database::connect, structs::ProgramState};
-
 mod authentication;
 mod database;
 mod models;
 mod schema;
 mod server;
 mod structs;
+
+use crate::{database::connect, server::handlers::server_middleware, structs::ProgramState};
+use axum::{
+    Router,
+    http::{
+        HeaderValue, Method,
+        header::{AUTHORIZATION, CONTENT_TYPE},
+    },
+    middleware,
+};
+use std::env;
+use tokio::net::TcpListener;
+use tower_http::cors::CorsLayer;
 
 #[tokio::main]
 async fn main() -> Result<(), std::io::Error> {
@@ -46,8 +46,12 @@ async fn main() -> Result<(), std::io::Error> {
     let make_service = Router::new()
         .nest("/users/", server::routers::get_users_router())
         .nest("/auth/", server::routers::get_auth_router(state.clone()))
-        .with_state(state)
+        .with_state(state.clone())
         .layer(cors)
+        .layer(middleware::from_fn_with_state(
+            state.clone(),
+            server_middleware,
+        ))
         .into_make_service();
 
     println!(":: server is running : 0.0.0.0:3000 ::");
