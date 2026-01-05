@@ -1,6 +1,5 @@
 /target
 .env
 .vscode/
-migrations/
 *.log
 .DS_Store

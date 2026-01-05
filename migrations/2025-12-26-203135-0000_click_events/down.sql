@@ -1,0 +1,1 @@
+drop table click_events;
