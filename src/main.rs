@@ -24,7 +24,8 @@ async fn main() -> Result<(), std::io::Error> {
 
     let cors = CorsLayer::new()
         .allow_origin(vec![
-            "http://127.0.0.1:5500".parse::<HeaderValue>().unwrap(),
+            "http://localhost:3001".parse::<HeaderValue>().unwrap(),
+            "https://lynkt.vercel.app".parse::<HeaderValue>().unwrap(),
         ])
         .allow_methods([Method::GET, Method::POST, Method::PATCH, Method::DELETE])
         .allow_headers([CONTENT_TYPE, AUTHORIZATION])
@@ -46,6 +47,7 @@ async fn main() -> Result<(), std::io::Error> {
     let make_service = Router::new()
         .nest("/users/", server::routers::get_users_router())
         .nest("/auth/", server::routers::get_auth_router(state.clone()))
+        .nest("/slug/", server::routers::get_slug_router())
         .with_state(state.clone())
         .layer(cors)
         .layer(middleware::from_fn_with_state(

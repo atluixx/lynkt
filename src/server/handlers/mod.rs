@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
 pub mod auth;
+pub mod slug;
 pub mod user;
 
 use crate::{server::errors::ApiError, structs::ProgramState};
@@ -60,9 +61,6 @@ pub async fn server_middleware(
             "Header named `x-frontend-secret` missing".into(),
         ));
     };
-
-    println!("Frontend Secret: {}", get_frontend_secret());
-    println!("Header Secret: {}", header);
 
     if header != get_frontend_secret() {
         return Err(ApiError::Unauthorized(

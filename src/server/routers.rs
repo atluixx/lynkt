@@ -7,6 +7,7 @@ use crate::{
     server::handlers::{
         auth::{login, me, register},
         auth_middleware,
+        slug::check,
         user::{
             create_user_link, delete_user, delete_user_link, get_user, get_user_link,
             get_user_links, get_users, update_user, update_user_link,
@@ -41,4 +42,8 @@ pub fn get_auth_router(state: ProgramState) -> Router<ProgramState> {
                 auth_middleware,
             )),
         )
+}
+
+pub fn get_slug_router() -> Router<ProgramState> {
+    Router::new().route("/check/{slug_path}/", get(check))
 }
